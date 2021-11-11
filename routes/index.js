@@ -29,6 +29,8 @@ module.exports = (app, passport) => {
   // 在 /admin/restaurants 底下則交給 adminController.getRestaurants 處理
   app.get('/admin/restaurants', authenticatedAdmin, adminController.getRestaurants)
 
+  app.post('/admin/restaurants', authenticatedAdmin, adminController.postRestaurant)
+
   app.get('/admin/restaurants/create', authenticatedAdmin, adminController.createRestaurant)
 
   app.get('/admin/restaurants/:id', authenticatedAdmin, adminController.getRestaurant)
@@ -37,7 +39,9 @@ module.exports = (app, passport) => {
 
   app.put('/admin/restaurants/:id', authenticatedAdmin, adminController.putRestaurant)
 
-  app.post('/admin/restaurants', authenticatedAdmin, adminController.postRestaurant)
+  app.delete('/admin/restaurants/:id', authenticatedAdmin, adminController.deleteRestaurant)
+
+
 
   app.get('/signup', userController.signUpPage)
   app.post('/signup', userController.signUp)
