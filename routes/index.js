@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const restController = require('../controllers/restController.js')
 const adminController = require('../controllers/adminController.js')
 const userController = require('../controllers/userController.js')
@@ -47,6 +46,10 @@ module.exports = (app, passport) => {
 
   app.delete('/admin/restaurants/:id', authenticatedAdmin, adminController.deleteRestaurant)
 
+  app.get('/admin/users', authenticatedAdmin, adminController.getUsers)
+
+  app.put('/admin/users/:id/toggleAdmin', authenticatedAdmin, adminController.toggleAdmin)
+
 
 
   app.get('/signup', userController.signUpPage)
@@ -58,10 +61,3 @@ module.exports = (app, passport) => {
 
 
 }
-=======
-module.exports = (app) => {
-  app.get('/', (req, res) => {
-    res.send('Hello World!')
-  })
-}
->>>>>>> origin/R01-test

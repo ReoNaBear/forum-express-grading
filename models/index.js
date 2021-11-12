@@ -28,13 +28,8 @@ fs.readdirSync(__dirname)
       file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js'
     )
   })
-<<<<<<< HEAD
   .forEach(file => {
     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes)
-=======
-  .forEach((file) => {
-    const model = sequelize['import'](path.join(__dirname, file))
->>>>>>> origin/R01-test
     db[model.name] = model
   })
 

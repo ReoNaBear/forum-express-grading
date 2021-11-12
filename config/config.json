@@ -7,7 +7,6 @@
     "dialect": "mysql"
   },
   "production": {
-<<<<<<< HEAD
     "use_env_variable": "CLEARDB_DATABASE_URL",
     "dialect": "postgres",
     "protocol": "postgres",
@@ -16,13 +15,6 @@
         "rejectUnauthorized": false
       }
     }
-=======
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
->>>>>>> origin/R01-test
   },
   "travis": {
     "username": "travis",
