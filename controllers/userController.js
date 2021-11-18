@@ -3,6 +3,10 @@ const db = require('../models')
 const User = db.User
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
+
+const Comment = db.Comment
+const Restaurant = db.Restaurant
+
 const userController = {
   signUpPage: (req, res) => {
     return res.render('signup')
@@ -47,8 +51,15 @@ const userController = {
     res.redirect('/signin')
   },
   getUser: (req, res) => {
-    return User.findByPk(req.params.id)
-      .then(user => res.render('profile', { user: user.toJSON() }))
+    return Comment.findAll({ raw: true, nest: true, where: { UserId: req.params.id }, include: [Restaurant] })
+      .then(comment => {
+        console.log(comment);
+        let count = comment.length
+        return User.findByPk(req.params.id)
+          .then(user => {
+            res.render('profile', { user: user.toJSON(), comment, count })
+          })
+      })
   },
 
   editUser: (req, res) => {

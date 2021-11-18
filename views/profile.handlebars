@@ -7,6 +7,7 @@
       <div class="ml-5 mt-3">
         <h3>{{user.name}}</h3>
         <div class="my-3">{{user.email}}</div>
+        <p><strong>{{count}}</strong> 已評論餐廳</p>
         <a href="/users/{{user.id}}/edit" class="btn btn-primary">edit</a>
       </div>
     </div>
@@ -18,8 +19,8 @@
     </div>
     <div class="card-body">
       {{#each comment}}
-      <a href="/restaurants/{{this.restaurantId}}" style="display: inline-block;">
-        <img class="img" src="{{this.restaurantImage}}" style="width: 100px; height:100px">
+      <a href="/restaurants/{{this.Restaurant.id}}" style="display: inline-block;">
+        <img class="img" src="{{this.Restaurant.image}}" style="width: 100px; height:100px">
       </a>
       {{/each}}
     </div>
