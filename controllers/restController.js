@@ -59,7 +59,22 @@ const restController = {
         { model: Comment, include: [User] }
       ]
     }).then(restaurant => {
+      restaurant.update({
+        viewCounts: restaurant.viewCounts + 1
+      })
       return res.render('restaurant', {
+        restaurant: restaurant.toJSON(),
+      })
+    })
+  },
+  getDashBoard: (req, res) => {
+    return Restaurant.findByPk(req.params.id, {
+      include: [
+        Category,
+        { model: Comment, include: [User] }
+      ]
+    }).then(restaurant => {
+      return res.render('dashboard', {
         restaurant: restaurant.toJSON(),
       })
     })
