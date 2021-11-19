@@ -4,12 +4,11 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn('Restaurants', 'CategoryId', {
       type: Sequelize.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'Categories',
         key: 'id',
       },
-      defaultValue: 1
     })
   },
 
