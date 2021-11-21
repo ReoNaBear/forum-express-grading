@@ -3,6 +3,7 @@ const adminController = require('../controllers/adminController.js')
 const userController = require('../controllers/userController.js')
 const categoryController = require('../controllers/categoryController.js')
 const commentController = require('../controllers/commentController.js')
+
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
 const helpers = require('../_helpers')
@@ -29,6 +30,8 @@ module.exports = (app, passport) => {
 
   //在 /restaurants 底下則交給 restController.getRestaurants 來處理
   app.get('/restaurants', authenticated, restController.getRestaurants)
+
+  app.get('/restaurants/top', authenticated, restController.getTopRestaurant)
 
   app.get('/restaurants/feeds', authenticated, restController.getFeeds)
 
