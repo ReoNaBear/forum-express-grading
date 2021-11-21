@@ -67,11 +67,16 @@ const userController = {
 
   editUser: (req, res) => {
     return User.findByPk(req.params.id)
+      .then()
       .then(user => res.render('edit', { user: user.toJSON() }))
   },
 
   putUser: (req, res) => {
     const { file } = req
+    if (helpers.getUser(req).id !== Number(req.params.id)) {
+      req.flash('error_messages', "無使用者權限")
+      return res.redirect(`/users/${helpers.getUser(req).id}`)
+    }
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
       imgur.upload(file.path, (err, img) => {
