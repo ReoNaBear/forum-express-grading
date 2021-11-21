@@ -9,6 +9,7 @@ const Comment = db.Comment
 const Restaurant = db.Restaurant
 const Followship = db.Followship
 const helpers = require('../_helpers')
+const user = require('../models/user')
 
 const userController = {
   signUpPage: (req, res) => {
@@ -72,27 +73,75 @@ const userController = {
 
   putUser: (req, res) => {
     const { file } = req
+
     if (helpers.getUser(req).id !== Number(req.params.id)) {
       req.flash('error_messages', "無使用者權限")
       return res.redirect(`/users/${helpers.getUser(req).id}`)
     }
 
-    imgur.setClientID(IMGUR_CLIENT_ID)
-    imgur.upload(file.path, (err, img) => {
+
+    if (file) {
+      imgur.setClientID(IMGUR_CLIENT_ID)
+      imgur.upload(file.path, (err, img) => {
+        return User.findByPk(req.params.id)
+          .then(user => {
+            user.update({
+              name: req.body.name,
+              email: req.body.email,
+              image: file ? img.data.link : null
+            })
+              .then(() => {
+                req.flash('success_messages', '使用者資料編輯成功')
+                return res.redirect(`/users/${req.params.id}`)
+              })
+          })
+      })
+    } else {
       return User.findByPk(req.params.id)
         .then(user => {
           user.update({
             name: req.body.name,
             email: req.body.email,
-            image: file ? img.data.link : null
+            image: user.image
           })
+            .then(() => {
+              req.flash('success_messages', '使用者資料編輯成功')
+              return res.redirect(`/users/${req.params.id}`)
+            })
         })
-        .then(() => {
-          req.flash('success_messages', '使用者資料編輯成功')
-          return res.redirect(`/users/${req.params.id}`)
-        })
-    })
+    }
+
   },
+
+
+  // 還沒修該好的版本
+  // let path = file ? file.path : ''
+  // let data = {}
+  // imgur.setClientID(IMGUR_CLIENT_ID)
+  // imgur.upload(path, (err, img) => {
+  //             if (err) {
+  //               data = {
+  //                 name: req.body.name,
+  //                 email: req.body.email
+  //               }
+  //             } else {
+  //               data = {
+  //                 name: req.body.name,
+  //                 email: req.body.email,
+  //                 image: img.data.link
+  //               }
+  //             }
+  //             return User.findByPk(req.params.id)
+  //               .then(user => {
+  //                 user.update(data)
+  //               })
+  //               .then(() => {
+  //                 req.flash('success_messages', '使用者資料編輯成功')
+  //                 return res.redirect(`/users/${req.params.id}`)
+  //               })
+  //           })
+  //         }
+
   addFavorite: (req, res) => {
     return Favorite.create({
       UserId: req.user.id,
