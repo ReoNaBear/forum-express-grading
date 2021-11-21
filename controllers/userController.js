@@ -158,6 +158,9 @@ const userController = {
         RestaurantId: req.params.restaurantId
       }
     })
+      .then((restaurant) => {
+        return res.redirect('back')
+      })
   },
   addLike: (req, res) => {
     return Like.create({
