@@ -56,7 +56,6 @@ const userController = {
   getUser: (req, res) => {
     return Comment.findAll({ raw: true, nest: true, where: { UserId: req.params.id }, include: [Restaurant] })
       .then(comment => {
-        console.log(comment);
         let count = comment.length
         return User.findByPk(req.params.id)
           .then(user => {
@@ -77,37 +76,22 @@ const userController = {
       req.flash('error_messages', "無使用者權限")
       return res.redirect(`/users/${helpers.getUser(req).id}`)
     }
-    if (file) {
-      imgur.setClientID(IMGUR_CLIENT_ID)
-      imgur.upload(file.path, (err, img) => {
-        return User.findByPk(req.params.id)
-          .then(user => {
-            user.update({
-              name: req.body.name,
-              email: req.body.email,
-              image: file ? img.data.link : null
-            })
-              .then(() => {
-                req.flash('success_messages', '使用者資料編輯成功')
-                return res.redirect(`/users/${req.params.id}`)
-              })
-          })
-      })
-    } else {
+
+    imgur.setClientID(IMGUR_CLIENT_ID)
+    imgur.upload(file.path, (err, img) => {
       return User.findByPk(req.params.id)
         .then(user => {
           user.update({
             name: req.body.name,
             email: req.body.email,
-            image: user.image
+            image: file ? img.data.link : null
           })
-            .then(() => {
-              req.flash('success_messages', '使用者資料編輯成功')
-              return res.redirect(`/users/${req.params.id}`)
-            })
         })
-    }
-
+        .then(() => {
+          req.flash('success_messages', '使用者資料編輯成功')
+          return res.redirect(`/users/${req.params.id}`)
+        })
+    })
   },
   addFavorite: (req, res) => {
     return Favorite.create({
