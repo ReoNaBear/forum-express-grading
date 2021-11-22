@@ -6,6 +6,7 @@ const imgur = require('imgur-node-api')
 const user = require('../models/user')
 const User = db.User
 const IMGUR_CLIENT_ID = 'c3ccf4a990a240a'
+const helpers = require('../_helpers')
 const adminController = {
   getRestaurants: (req, res) => {
     return Restaurant.findAll({
@@ -158,6 +159,10 @@ const adminController = {
       .then((user) => {
         if (user.email === 'root@example.com') {
           req.flash('error_messages', '禁止變更管理者權限')
+          return res.redirect('back')
+        }
+        if (helpers.getUser(req).email === user.email) {
+          req.flash('error_messages', '禁止變更自己的權限')
           return res.redirect('back')
         }
         user.isAdmin === false ? user.isAdmin = true : user.isAdmin = false
