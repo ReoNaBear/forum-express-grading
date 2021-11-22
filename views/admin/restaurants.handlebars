@@ -43,10 +43,21 @@
           </a>
         </button>
         <form action="/admin/restaurants/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
-          <button type="submit" class="btn btn-link">Delete</button>
+          <button type="submit" class="btn btn-link" onclick="javascript:return del();">Delete</button>
         </form>
       </td>
     </tr>
     {{/each}}
   </tbody>
 </table>
+
+<script>
+  function del() {
+    const msg = "真的確定要刪除嗎？\n\n刪除後無法復原！";
+    if (confirm(msg) == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+</script>

@@ -25,6 +25,18 @@
 </form>
 <br>
 <br>
-<form action="/users/{{user.id}}?_method=DELETE" method="POST" style="display: contents;"><button type="submit"
-    class="btn btn-danger">只刪除目前大頭貼</button>
+<form action="/users/{{user.id}}?_method=DELETE" method="POST" style="display: contents;"
+  onclick="javascript:return del();"><button type="submit" class="btn btn-danger">只刪除目前大頭貼</button>
 </form>
+
+
+<script>
+  function del() {
+    const msg = "確定要刪除大頭貼嗎？";
+    if (confirm(msg) == true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+</script>
