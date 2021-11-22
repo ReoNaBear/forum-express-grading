@@ -54,93 +54,147 @@ const userController = {
     req.logout()
     res.redirect('/signin')
   },
-  getUser: (req, res) => {
-    return Comment.findAll({ raw: true, nest: true, where: { UserId: req.params.id }, include: [Restaurant] })
-      .then(comment => {
-        let count = comment.length
-        return User.findByPk(req.params.id)
-          .then(user => {
-            res.render('profile', { user: user.toJSON(), comment, count })
-          })
+  getUser: async (req, res) => {
+    try {
+      const isEditable = helpers.getUser(req).id === Number(req.params.id) || false
+
+      let user = await User.findByPk(helpers.getUser(req).id)
+
+      const comment = await Comment.findAll({
+        raw: true,
+        nest: true,
+        where: { UserId: req.params.id },
+        include: [Restaurant]
       })
+      let count = comment.length
+      let thisUser = await User.findByPk(req.params.id)
+
+      return res.render('profile', { thisUser: thisUser.toJSON(), user: user.toJSON(), comment, count, isEditable })
+
+    } catch (e) {
+      console.log('error');
+    }
   },
 
   editUser: (req, res) => {
+    if (helpers.getUser(req).id !== Number(req.params.id)) {
+      req.flash('error_messages', "無使用者權限")
+      return res.redirect(`/users/${helpers.getUser(req).id}`)
+    }
     return User.findByPk(req.params.id)
       .then()
       .then(user => res.render('edit', { user: user.toJSON() }))
   },
 
-  putUser: (req, res) => {
-    const { file } = req
+  putUser: async (req, res) => {
+    try {
+      const { file } = await req
+      if (helpers.getUser(req).id !== Number(req.params.id)) {
+        req.flash('error_messages', "無使用者權限")
+        return res.redirect(`/users/${helpers.getUser(req).id}`)
+      }
+      let user = await User.findByPk(req.params.id)
 
-    if (helpers.getUser(req).id !== Number(req.params.id)) {
-      req.flash('error_messages', "無使用者權限")
-      return res.redirect(`/users/${helpers.getUser(req).id}`)
-    }
+      await user.update(
+        {
+          name: req.body.name,
+          email: req.body.email,
+        })
 
-
-    if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
-      imgur.upload(file.path, (err, img) => {
-        return User.findByPk(req.params.id)
-          .then(user => {
-            user.update({
+
+      await file ? imgur.upload(file.path, async (err, img) => {
+        try {
+          await user.update(
+            {
               name: req.body.name,
               email: req.body.email,
-              image: file ? img.data.link : null
+              image: img.data.link
             })
-              .then(() => {
-                req.flash('success_messages', '使用者資料編輯成功')
-                return res.redirect(`/users/${req.params.id}`)
-              })
-          })
-      })
-    } else {
-      return User.findByPk(req.params.id)
-        .then(user => {
-          user.update({
-            name: req.body.name,
-            email: req.body.email,
-            image: user.image
-          })
-            .then(() => {
-              req.flash('success_messages', '使用者資料編輯成功')
-              return res.redirect(`/users/${req.params.id}`)
-            })
-        })
+          req.flash('success_messages', '使用者資料編輯成功')
+          return res.redirect(`/users/${req.params.id}`)
+        } catch (e) { console.log(e); }
+      }) :
+        req.flash('success_messages', '使用者資料編輯成功'),
+        res.redirect(`/users/${req.params.id}`)
+    } catch (e) {
+      console.log(e);
     }
+
+
+
+
+    // const { file } = req
+
+    // if (helpers.getUser(req).id !== Number(req.params.id)) {
+    //   req.flash('error_messages', "無使用者權限")
+    //   return res.redirect(`/users/${helpers.getUser(req).id}`)
+    // }
+
+
+    // if (file) {
+    //   imgur.setClientID(IMGUR_CLIENT_ID)
+    //   imgur.upload(file.path, (err, img) => {
+    //     return User.findByPk(req.params.id)
+    //       .then(user => {
+    //         user.update({
+    //           name: req.body.name,
+    //           email: req.body.email,
+    //           image: file ? img.data.link : null
+    //         })
+    //           .then(() => {
+    //             req.flash('success_messages', '使用者資料編輯成功')
+    //             return res.redirect(`/users/${req.params.id}`)
+    //           })
+    //       })
+    //   })
+    // } else {
+    //   return User.findByPk(req.params.id)
+    //     .then(user => {
+    //       user.update({
+    //         name: req.body.name,
+    //         email: req.body.email,
+    //         image: user.image
+    //       })
+    //         .then(() => {
+    //           req.flash('success_messages', '使用者資料編輯成功')
+    //           return res.redirect(`/users/${req.params.id}`)
+    //         })
+    //     })
+    // }
 
   },
 
 
-  // 還沒修該好的版本
-  // let path = file ? file.path : ''
+  // // 還沒修該好的版本
+  // let path = file ? file.path : 'err'
   // let data = {}
   // imgur.setClientID(IMGUR_CLIENT_ID)
-  // imgur.upload(path, (err, img) => {
-  //             if (err) {
-  //               data = {
-  //                 name: req.body.name,
-  //                 email: req.body.email
-  //               }
-  //             } else {
-  //               data = {
-  //                 name: req.body.name,
-  //                 email: req.body.email,
-  //                 image: img.data.link
-  //               }
-  //             }
-  //             return User.findByPk(req.params.id)
-  //               .then(user => {
-  //                 user.update(data)
-  //               })
-  //               .then(() => {
-  //                 req.flash('success_messages', '使用者資料編輯成功')
-  //                 return res.redirect(`/users/${req.params.id}`)
-  //               })
-  //           })
-  //         }
+  // imgur.upload(file.path, (err, img) => {
+  //   console.log(err);
+  //   if (err) {
+  //     console.log('gag');
+  //     data = {
+  //       name: req.body.name,
+  //       email: req.body.email
+  //     }
+  //   } else {
+  //     data = {
+  //       name: req.body.name,
+  //       email: req.body.email,
+  //       image: img.data.link
+  //     }
+  //   }
+  //   // return User.findByPk(req.params.id)
+  //   //   .then(user => {
+  //   //     user.update(data)
+  //   //   })
+  //   //   .then(() => {
+  //   //     req.flash('success_messages', '使用者資料編輯成功')
+  //   //     return res.redirect(`/users/${req.params.id}`)
+  //   //   })
+  // })
+  // },
 
   addFavorite: (req, res) => {
     return Favorite.create({
@@ -222,6 +276,22 @@ const userController = {
       .then((followship) => {
         followship.destroy()
           .then((followship) => {
+            return res.redirect('back')
+          })
+      })
+  },
+  removeImage: (req, res) => {
+    if (helpers.getUser(req).id !== Number(req.params.id)) {
+      req.flash('error_messages', "無使用者權限")
+      return res.redirect(`/users/${helpers.getUser(req).id}`)
+    }
+    return User.findByPk(req.params.id)
+      .then(user => {
+        user.update({
+          image: ''
+        })
+          .then(() => {
+            req.flash('success_messages', '刪除照片成功')
             return res.redirect('back')
           })
       })

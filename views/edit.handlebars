@@ -8,11 +8,23 @@
     <label for="email">Email</label>
     <input type="text" class="form-control" name="email" id="email" placeholder="Enter email" value="{{user.email}}">
   </div>
-
+  <div>
+    當前大頭貼:
+    <img class="img-responsive center-block" src="{{user.image}}" style="width: 250px; border-radius:50%">
+  </div>
   <div class="form-group">
-    <label for="image">Image</label>
+    <label for="image">新增照片:</label>
     <input type="file" class="form-control-file" id="image" name="image">
   </div>
 
-  <button type="submit" class="btn btn-primary">Submit</button>
+
+  <button type="submit" class="btn btn-primary" style="display: inline;">Submit</button>
+
+  <a href="/users/{{user.id}}"><button type="button" class="btn btn-danger" style="display: inline;">返回個人頁面</button>
+  </a>
+</form>
+<br>
+<br>
+<form action="/users/{{user.id}}?_method=DELETE" method="POST" style="display: contents;"><button type="submit"
+    class="btn btn-danger">只刪除目前大頭貼</button>
 </form>
