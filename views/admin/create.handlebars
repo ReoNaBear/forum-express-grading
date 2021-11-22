@@ -5,8 +5,8 @@
     {{/if}}
     <div class="form-group">
       <label for="name">Name</label>
-      <input type="text" class="form-control" name="name" id="name" placeholder="Enter name"
-        value="{{restaurant.name}}">
+      <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" value="{{restaurant.name}}"
+        maxlength="20">
     </div>
 
     <div class="form-group">
@@ -21,13 +21,14 @@
 
     <div class="form-group">
       <label for="tel">Tel</label>
-      <input type="text" class="form-control" name="tel" id="tel" placeholder="Enter tel" value="{{restaurant.tel}}">
+      <input type="text" class="form-control" name="tel" id="tel" placeholder="Enter tel" value="{{restaurant.tel}}"
+        oninput="value=value.replace(/[^\d\-\()\d]/g,'')" maxlength="12">
     </div>
 
     <div class="form-group">
       <label for="address">Address</label>
       <input type="text" class="form-control" name="address" id="address" placeholder="Enter address"
-        value="{{restaurant.address}}">
+        value="{{restaurant.address}}" maxlength="30">
     </div>
 
     <div class="form-group">
@@ -38,7 +39,8 @@
 
     <div class="form-group">
       <label for="description">Description</label>
-      <textarea class="form-control" id="description" name="description" rows="3">{{restaurant.description}}"</textarea>
+      <textarea class="form-control" id="description" name="description" maxlength="100"
+        rows="3">{{restaurant.description}}"</textarea>
     </div>
 
     <div class="form-group">
