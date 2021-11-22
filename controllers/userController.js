@@ -100,15 +100,11 @@ const userController = {
           name: req.body.name,
           email: req.body.email,
         })
-
       imgur.setClientID(IMGUR_CLIENT_ID)
-
       await file ? imgur.upload(file.path, async (err, img) => {
         try {
           await user.update(
             {
-              name: req.body.name,
-              email: req.body.email,
               image: img.data.link
             })
           req.flash('success_messages', '使用者資料編輯成功')
