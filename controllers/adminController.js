@@ -7,15 +7,11 @@ const user = require('../models/user')
 const User = db.User
 const IMGUR_CLIENT_ID = 'c3ccf4a990a240a'
 const helpers = require('../_helpers')
+const adminService = require('../services/adminService.js')
 const adminController = {
   getRestaurants: (req, res) => {
-    return Restaurant.findAll({
-      raw: true,
-      nest: true,
-      include: [Category]
-    }).then(restaurants => {
-      console.log(restaurants) // 加入 console 觀察資料的變化
-      return res.render('admin/restaurants', { restaurants: restaurants })
+    adminService.getRestaurants(req, res, (data) => {
+      return res.render('admin/restaurants', data)
     })
   },
   createRestaurant: (req, res) => {
